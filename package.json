@@ -1,0 +1,8 @@
+{
+  "name": "gol-node",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "nodeunit": "~0.9.0"
+  }
+}
