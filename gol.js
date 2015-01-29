@@ -1,3 +1,5 @@
 #!/usr/bin/env node
+var game = require('./lib/game');
+var seeds = require('./lib/seeds');
 
-console.log("hello");
+game.play(seeds.default);
