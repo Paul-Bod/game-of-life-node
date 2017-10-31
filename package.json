@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "dependencies": {
+    "lodash": "^4.17.4",
     "nodeunit": "~0.9.0"
   }
 }
