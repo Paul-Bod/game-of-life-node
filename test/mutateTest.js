@@ -13,6 +13,10 @@ function emptySeed() {
     return rows;
 }
 
+function randomIndex(min, max) {
+      return Math.floor(Math.random() * (max - min) + min);
+}
+
 function singleCellSeed() {
     const seed = emptySeed();
     const xIndex = randomIndex(0, seed.length);
@@ -40,17 +44,24 @@ function exactlyOneLiveCell(results) {
         .length === results.length;
 }
 
-// TODO the logic here is flawed. Consider 101000000
+/*
+ * For each alive cell treat it as the centre of a grid of 9 cells (horizontally)
+ * At least one other cell in the grid must be alive, giving at least 2 live cells
+ * If this is not the case it means the live cell at the centre is not adjacent to another
+ */
 function liveCellsAreAdjacent(results) {
-    return results.map(result => {
-        const flattened = result.flattenDeep(result);
-        const firstLiveCell = _.indexOf(flattened, 1);
-        const lastLiveCell = _.lastIndexOf(flattened, 1);
-        const distance = _.slice(flattened, firstLiveCell+1, lastLiveCell).length;
-        return distance <= 3; // any greater between two cells and they are not adjacent
-    })
-    .filter(result => result === true)
-    .length === results.length;
+    const result = results[0];
+
+    const flattened = _.flattenDeep(result);
+
+    const aliveIndex = _.indexOf(flattened, 1);
+    const leftTrimmed =  _.drop(flattened, aliveIndex-4)
+    const adjacents =  _.dropRight(leftTrimmed, leftTrimmed.length - 9);
+    const sum = _.reduce(adjacents, function(sum, n) {
+        return sum + n;
+    }, 0)  
+
+    return sum >= 2;
 }
 
 function givesDifferentResults(results) {
@@ -71,6 +82,7 @@ exports.randomMutation = {
         const results = manyResults(singleCellSeed);
 
         test.equal(true, givesDifferentResults(results), ['A simple seed should produce different results for each mutation'])
+        test.equal(true, liveCellsAreAdjacent(results), ['Mutations should form adjacent to already living cells'])
         test.done();
     }
 };
